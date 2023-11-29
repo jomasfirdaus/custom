@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
+from django.utils import timezone
 
 # Create your models here.
 
@@ -59,6 +60,33 @@ class Donor(models.Model):
 
     class Meta:
         verbose_name_plural='02-Data-Custom-Donor'
+
+
+class Project(models.Model):
+    name = models.CharField(max_length=100, null=False, blank=False, verbose_name="Project Name")
+    donor = models.ForeignKey(Donor, on_delete=models.CASCADE, null=True, blank=False, related_name="Projectdonor")
+    
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Projectcreatedbys")
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Projectupdatetedbys")
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Projectdeletedbys")
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        template = '{0.name}'
+        return template.format(self)
+    
+    def delete(self, user):
+        self.deleted_at = str(timezone.now())
+        self.deleted_by = user
+        self.save()
+
+    default_objects = models.Manager()  # The default manager
+    objects = ActiveManager()
+
+    class Meta:
+        verbose_name_plural='02-Data-Custom-Project'
 
 
 class Branch(models.Model):
@@ -430,6 +458,95 @@ class Position(models.Model):
 
     class Meta:
         verbose_name_plural='11-Data-Custom-Position'
+
+class Funsaun(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=20, null=True, blank=True)
+    
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Funsauncreatedbys")
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Funsaunupdatetedbys")
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Funsaundeletedbys")
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        template = '{0.name} ({0.code})'
+        return template.format(self)
+    
+    def delete(self, user):
+        self.deleted_at = str(timezone.now())
+        self.deleted_by = user
+        self.save()
+
+    default_objects = models.Manager()  # The default manager
+    objects = ActiveManager()
+
+    class Meta:
+        verbose_name_plural='11-Data-Custom-Funsaun'
+
+class Year(models.Model):
+    name = models.IntegerField()
+    
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Yearcreatedbys")
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Yearupdatetedbys")
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Yeardeletedbys")
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        template = '{0.name}'
+        return template.format(self)
+    
+    def delete(self, user):
+        self.deleted_at = str(timezone.now())
+        self.deleted_by = user
+        self.save()
+
+    default_objects = models.Manager()  # The default manager
+    objects = ActiveManager()
+
+    class Meta:
+        verbose_name_plural='11-Data-Custom-Year'
+
+        
+class Holiday(models.Model):
+    day = models.DateField(null=False, blank=False, verbose_name="Day")
+    name = models.CharField(max_length=255, null=False, blank=False, verbose_name="Holiday Name")
+    type = models.CharField(choices=[('National','National'),('Tolerence','Tolerence'),('CVTL','CVTL')], max_length=50, default='National', null=False, blank=False, verbose_name="Holiday Type")
+    status = models.BooleanField(default=True)
+    
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Holidaycreatedbys")
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Holidayupdatetedbys")
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="Holidaydeletedbys")
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    hashed = models.CharField(max_length=32, null=True, blank=True)
+
+    def __str__(self):
+        #template = '{0.name}'
+        return self.name
+    
+    def soft_delete(self, user):
+        self.deleted_at = str(timezone.now())
+        self.deleted_by = user
+        self.save()
+
+    def undelete(self):
+        self.deleted_at = None
+        self.deleted_by = None
+        self.save()
+
+    def hard_delete(self):
+        super().delete()
+
+    objects = models.Manager()  # The default manager
+    active_objects = ActiveManager()
+
+    class Meta:
+        verbose_name_plural='08-Dadus_Custom_Holiday'
 
 
 # Add the auditlog

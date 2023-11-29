@@ -18,6 +18,13 @@ class DonorAdmin(ImportExportModelAdmin):
     resource_class = DonorResource
 admin.site.register(Donor, DonorAdmin)
 
+class ProjectResource(resources.ModelResource):
+    class Meta:
+        model = Project
+class ProjectAdmin(ImportExportModelAdmin):
+    resource_class = ProjectResource
+admin.site.register(Project, ProjectAdmin)
+
 class BranchResource(resources.ModelResource):
     class Meta:
         model = Branch
@@ -115,3 +122,24 @@ class DepartmentResource(resources.ModelResource):
 class DepartmentAdmin(ImportExportModelAdmin):
     resource_class = DepartmentResource
 admin.site.register(Department, DepartmentAdmin)
+
+class FunsaunResource(resources.ModelResource):
+    class Meta:
+        model = Funsaun
+class FunsaunAdmin(ImportExportModelAdmin):
+    resource_class = FunsaunResource
+admin.site.register(Funsaun, FunsaunAdmin)
+
+class YearResource(resources.ModelResource):
+    class Meta:
+        model = Year
+class YearAdmin(ImportExportModelAdmin):
+    resource_class = YearResource
+admin.site.register(Year, YearAdmin)
+
+class HolidayResource(resources.ModelResource):
+    class Meta:
+        model = Holiday
+class HolidayAdmin(ImportExportModelAdmin):
+    resource_class = HolidayResource
+admin.site.register(Holiday, HolidayAdmin)
